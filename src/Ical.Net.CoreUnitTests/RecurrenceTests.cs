@@ -1863,6 +1863,59 @@ namespace Ical.Net.CoreUnitTests
         }
 
         /// <summary>
+        /// Ensures that, by default, MILLISECONDLY recurrence rules are not allowed.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Millisecondly1()
+        {
+            var evt = new AutoResetEvent(false);
+
+            try
+            {
+                var iCal = Calendar.Load(IcsFiles.Millisecondly1);
+                var occurrences = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
+            }
+            catch (ArgumentException)
+            {
+                evt.Set();
+            }
+
+            Assert.IsTrue(evt.WaitOne(2000), "Evaluation engine should have failed.");
+        }
+        
+        /// <summary>
+        /// Ensures that the proper behavior occurs when the evaluation
+        /// mode is set to adjust automatically for SECONDLY evaluation
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Millisecondly1_1()
+        {
+            var iCal = Calendar.Load(IcsFiles.Millisecondly1);
+            iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
+
+            EventOccurrenceTest(
+                iCal,
+                new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
+                new CalDateTime(2007, 6, 21, 8, 10, 1, _tzid), // End period is exclusive, not inclusive.
+                new[]
+                {
+                    new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 1, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 2, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 3, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 4, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 5, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 6, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 7, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 8, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 9, 0, _tzid),
+                    new CalDateTime(2007, 6, 21, 8, 10, 0, _tzid)
+                },
+                null
+            );
+        }
+        
+        /// <summary>
         /// Ensures that, by default, SECONDLY recurrence rules are not allowed.
         /// </summary>
         [Test, Category("Recurrence")]
@@ -1875,7 +1928,7 @@ namespace Ical.Net.CoreUnitTests
                 var iCal = Calendar.Load(IcsFiles.Secondly1);
                 var occurrences = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
                 evt.Set();
             }

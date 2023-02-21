@@ -171,6 +171,7 @@ namespace Ical.Net
     public enum FrequencyType
     {
         None,
+        Millisecondly,
         Secondly,
         Minutely,
         Hourly,
@@ -230,6 +231,11 @@ namespace Ical.Net
         /// Does not restrict recurrence evaluation - WARNING: this may cause very slow performance!
         /// </summary>
         NoRestriction,
+
+        /// <summary>
+        /// Disallows use of the MILLISECONDLY frequency for recurrence evaluation
+        /// </summary>
+        RestrictMillisecondly,
 
         /// <summary>
         /// Disallows use of the SECONDLY frequency for recurrence evaluation

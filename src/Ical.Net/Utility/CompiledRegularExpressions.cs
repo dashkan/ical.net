@@ -81,7 +81,7 @@ internal static class CompiledRegularExpressions
 #endif
 
     private const string OtherIntervalPattern =
-        @"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)";
+        @"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>ms|second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)";
 
     private const RegexOptions OtherIntervalOptions = RegexOptions.Compiled | RegexOptions.IgnoreCase;
 
@@ -94,7 +94,7 @@ internal static class CompiledRegularExpressions
 #endif
 
     private const string AdverbFrequenciesPattern =
-        @"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)";
+        @"FREQ=(MILLISECONDLY|SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)";
 
     private const RegexOptions AdverbFrequenciesOptions = RegexOptions.Compiled | RegexOptions.IgnoreCase;
 
@@ -106,7 +106,7 @@ internal static class CompiledRegularExpressions
     internal static readonly Regex AdverbFrequencies = new(AdverbFrequenciesPattern, AdverbFrequenciesOptions);
 #endif
 
-    private const string NumericTemporalUnitsPattern = @"(?<Num>\d+)\w\w\s+(?<Type>second|minute|hour|day|week|month)";
+    private const string NumericTemporalUnitsPattern = @"(?<Num>\d+)\w\w\s+(?<Type>ms|second|minute|hour|day|week|month)";
     private const RegexOptions NumericTemporalUnitsOptions = RegexOptions.Compiled | RegexOptions.IgnoreCase;
 #if SUPPORTS_REGEX_CODEGEN
     [GeneratedRegex(NumericTemporalUnitsPattern, NumericTemporalUnitsOptions)]
@@ -117,7 +117,7 @@ internal static class CompiledRegularExpressions
         new(NumericTemporalUnitsPattern, NumericTemporalUnitsOptions);
 #endif
 
-    private const string TemporalUnitTypePattern = @"(?<Type>second|minute|hour|day|week|month)\s+(?<Num>\d+)";
+    private const string TemporalUnitTypePattern = @"(?<Type>ms|second|minute|hour|day|week|month)\s+(?<Num>\d+)";
     private const RegexOptions TemporalUnitTypeOptions = RegexOptions.Compiled | RegexOptions.IgnoreCase;
 #if SUPPORTS_REGEX_CODEGEN
     [GeneratedRegex(TemporalUnitTypePattern, TemporalUnitTypeOptions)]
@@ -141,7 +141,7 @@ internal static class CompiledRegularExpressions
 #endif
 
     private const string TimePattern =
-        @"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?\s*(?<Meridian>(a|p)m?)?";
+        @"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?((:|\.)(?<Millisecond>\d{1,3}))?\s*(?<Meridian>(a|p)m?)?";
 
     private const RegexOptions TimeOptions = RegexOptions.Compiled | RegexOptions.IgnoreCase;
 #if SUPPORTS_REGEX_CODEGEN
@@ -204,7 +204,7 @@ internal static class CompiledRegularExpressions
 #endif
 
     private const string TimespanPattern =
-        @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$";
+        @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?((?<ms>\d+)MS)?)?)$";
 
     private const RegexOptions TimespanOptions = RegexOptions.Compiled | RegexOptions.IgnoreCase;
 #if SUPPORTS_REGEX_CODEGEN

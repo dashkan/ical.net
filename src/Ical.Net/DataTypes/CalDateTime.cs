@@ -41,21 +41,31 @@ namespace Ical.Net.DataTypes
             Initialize(value, tzId, null);
         }
 
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second)
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second, int ms)
         {
-            Initialize(year, month, day, hour, minute, second, null, null);
+            Initialize(year, month, day, hour, minute, second, ms, null, null);
             HasTime = true;
         }
-
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId)
+        
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second) :
+            this(year, month, day, hour, minute, second, 0)
         {
-            Initialize(year, month, day, hour, minute, second, tzId, null);
+        }
+
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second, int ms, string tzId)
+        {
+            Initialize(year, month, day, hour, minute, second, ms, tzId, null);
             HasTime = true;
+        }
+        
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId) :
+            this(year, month, day, hour, minute, second, 0, tzId)
+        {
         }
 
         public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId, Calendar cal)
         {
-            Initialize(year, month, day, hour, minute, second, tzId, cal);
+            Initialize(year, month, day, hour, minute, second, 0, tzId, cal);
             HasTime = true;
         }
 
@@ -68,9 +78,9 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzId, Calendar cal)
+        private void Initialize(int year, int month, int day, int hour, int minute, int second, int ms, string tzId, Calendar cal)
         {
-            Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, cal);
+            Initialize(CoerceDateTime(year, month, day, hour, minute, second, ms, DateTimeKind.Local), tzId, cal);
         }
 
         private void Initialize(DateTime value, string tzId, Calendar cal)
@@ -88,13 +98,13 @@ namespace Ical.Net.DataTypes
                 TzId = "UTC";
             }
 
-            Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Kind);
+            Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind);
             HasDate = true;
             HasTime = value.Second != 0 || value.Minute != 0 || value.Hour != 0;
             AssociatedObject = cal;
         }
 
-        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
+        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, int ms, DateTimeKind kind)
         {
             var dt = DateTime.MinValue;
 
@@ -111,7 +121,7 @@ namespace Ical.Net.DataTypes
                 }
                 else if (year > 0)
                 {
-                    dt = new DateTime(year, month, day, hour, minute, second, kind);
+                    dt = new DateTime(year, month, day, hour, minute, second, ms, kind);
                 }
             }
             catch { }

@@ -69,6 +69,11 @@ namespace Ical.Net.Evaluation
                 r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
             }
 
+            if (r.Frequency > FrequencyType.Millisecondly && r.ByMillisecond.Count == 0 && referenceDate.HasTime
+                /* NOTE: Fixes a bug where all-day events have ByMillisecond/BySecond/ByMinute/ByHour added incorrectly */)
+            {
+                r.ByMillisecond.Add(referenceDate.Millisecond);
+            }
             if (r.Frequency > FrequencyType.Secondly && r.BySecond.Count == 0 && referenceDate.HasTime
                 /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
             {
@@ -132,6 +137,26 @@ namespace Ical.Net.Evaluation
                     case RecurrenceEvaluationModeType.AdjustAutomatically:
                         switch (pattern.Frequency)
                         {
+                            case FrequencyType.Millisecondly:
+                            {
+                                switch (evaluationRestriction)
+                                {
+                                    case RecurrenceRestrictionType.Default:
+                                    case RecurrenceRestrictionType.RestrictMillisecondly:
+                                        pattern.Frequency = FrequencyType.Secondly;
+                                        break;
+                                    case RecurrenceRestrictionType.RestrictSecondly:
+                                        pattern.Frequency = FrequencyType.Minutely;
+                                        break;
+                                    case RecurrenceRestrictionType.RestrictMinutely:
+                                        pattern.Frequency = FrequencyType.Hourly;
+                                        break;
+                                    case RecurrenceRestrictionType.RestrictHourly:
+                                        pattern.Frequency = FrequencyType.Daily;
+                                        break;
+                                }
+                            }
+                                break;                            
                             case FrequencyType.Secondly:
                             {
                                 switch (evaluationRestriction)
@@ -178,6 +203,19 @@ namespace Ical.Net.Evaluation
                     case RecurrenceEvaluationModeType.Default:
                         switch (pattern.Frequency)
                         {
+                            case FrequencyType.Millisecondly:
+                            {
+                                switch (evaluationRestriction)
+                                {
+                                    case RecurrenceRestrictionType.Default:
+                                    case RecurrenceRestrictionType.RestrictMillisecondly:
+                                    case RecurrenceRestrictionType.RestrictSecondly:
+                                    case RecurrenceRestrictionType.RestrictMinutely:
+                                    case RecurrenceRestrictionType.RestrictHourly:
+                                        throw new ArgumentException();
+                                }
+                            }
+                                break;
                             case FrequencyType.Secondly:
                             {
                                 switch (evaluationRestriction)
@@ -332,6 +370,7 @@ namespace Ical.Net.Evaluation
             dates = GetHourVariants(dates, pattern, expandBehaviors[5]);
             dates = GetMinuteVariants(dates, pattern, expandBehaviors[6]);
             dates = GetSecondVariants(dates, pattern, expandBehaviors[7]);
+            dates = GetMillisecondVariants(dates, pattern, expandBehaviors[8]);
             dates = ApplySetPosRules(dates, pattern);
             return dates;
         }
@@ -821,6 +860,56 @@ namespace Ical.Net.Evaluation
                 {
                     var minute = pattern.ByMinute[j];
                     if (date.Minute == minute)
+                    {
+                        goto Next;
+                    }
+                }
+                // Remove unmatched dates
+                dates.RemoveAt(i);
+                Next:
+                ;
+            }
+            return dates;
+        }
+
+        /**
+         * Applies BYMILLISECOND rules specified in this Recur instance to the specified date list. If no BYMILLISECOND rules are
+         * specified the date list is returned unmodified.
+         * @param dates
+         * @return
+         */
+
+        private List<DateTime> GetMillisecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        {
+            if (expand == null || pattern.BySecond.Count == 0)
+            {
+                return dates;
+            }
+
+            if (expand.Value)
+            {
+                // Expand behavior
+                var secondlyDates = new List<DateTime>();
+                for (var i = 0; i < dates.Count; i++)
+                {
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByMillisecond.Count; j++)
+                    {
+                        var ms = pattern.ByMillisecond[j];
+                        date = date.AddMilliseconds(-date.Second + ms);
+                        secondlyDates.Add(date);
+                    }
+                }
+                return secondlyDates;
+            }
+            // Limit behavior
+            for (var i = dates.Count - 1; i >= 0; i--)
+            {
+                var date = dates[i];
+                for (var j = 0; j < pattern.ByMillisecond.Count; j++)
+                {
+                    var ms = pattern.ByMillisecond[j];
+                    if (date.Millisecond == ms)
                     {
                         goto Next;
                     }

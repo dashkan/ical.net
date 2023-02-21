@@ -83,6 +83,7 @@ namespace Ical.Net.Serialization.DataTypes
             if (dt.HasTime)
             {
                 value.Append($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}");
+                if(dt.Millisecond > 0) value.Append($".{dt.Millisecond:000}");
                 if (dt.IsUtc)
                 {
                     value.Append("Z");

@@ -77,6 +77,7 @@ namespace Ical.Net.Serialization.DataTypes
                 var hours = 0;
                 var minutes = 0;
                 var seconds = 0;
+                var ms = 0;
 
                 if (match.Success)
                 {
@@ -110,10 +111,14 @@ namespace Ical.Net.Serialization.DataTypes
                             {
                                 seconds = Convert.ToInt32(match.Groups["second"].Value);
                             }
+                            if (match.Groups["ms"].Success)
+                            {
+                                ms = Convert.ToInt32(match.Groups["ms"].Value);
+                            }
                         }
                     }
 
-                    return new TimeSpan(days * mult, hours * mult, minutes * mult, seconds * mult);
+                    return new TimeSpan(days * mult, hours * mult, minutes * mult, seconds * mult, ms * mult);
                 }
             }
             catch {}

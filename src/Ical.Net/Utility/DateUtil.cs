@@ -11,7 +11,7 @@ namespace Ical.Net.Utility
     internal static class DateUtil
     {
         public static IDateTime StartOfDay(IDateTime dt)
-            => dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
+            => dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second).AddMilliseconds(-dt.Millisecond);
 
         public static IDateTime EndOfDay(IDateTime dt)
             => StartOfDay(dt).AddDays(1).AddTicks(-1);

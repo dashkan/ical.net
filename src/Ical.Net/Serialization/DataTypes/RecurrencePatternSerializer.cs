@@ -177,6 +177,7 @@ namespace Ical.Net.Serialization.DataTypes
             SerializeByValue(values, recur.ByMonth, "BYMONTH");
             SerializeByValue(values, recur.ByMonthDay, "BYMONTHDAY");
             SerializeByValue(values, recur.BySecond, "BYSECOND");
+            SerializeByValue(values, recur.ByMillisecond, "BYMILLISECOND");
             SerializeByValue(values, recur.BySetPosition, "BYSETPOS");
             SerializeByValue(values, recur.ByWeekNo, "BYWEEKNO");
             SerializeByValue(values, recur.ByYearDay, "BYYEARDAY");
@@ -237,6 +238,9 @@ namespace Ical.Net.Serialization.DataTypes
                                 break;
                             case "INTERVAL":
                                 r.Interval = Convert.ToInt32(keyValue);
+                                break;
+                            case "BYMILLISECOND":
+                                AddInt32Values(r.ByMillisecond, keyValue);
                                 break;
                             case "BYSECOND":
                                 AddInt32Values(r.BySecond, keyValue);
@@ -301,6 +305,9 @@ namespace Ical.Net.Serialization.DataTypes
 
                 switch (match.Groups["Freq"].Value.ToLower())
                 {
+                    case "ms":
+                        r.Frequency = FrequencyType.Millisecondly;
+                        break;                    
                     case "second":
                         r.Frequency = FrequencyType.Secondly;
                         break;
@@ -337,6 +344,9 @@ namespace Ical.Net.Serialization.DataTypes
 
                         switch (match.Groups["Type"].Value.ToLower())
                         {
+                            case "ms":
+                                r.ByMillisecond.Add(num);
+                                break;
                             case "second":
                                 r.BySecond.Add(num);
                                 break;
@@ -411,14 +421,16 @@ namespace Ical.Net.Serialization.DataTypes
 
                         r.ByHour.Add(hour);
 
-                        int minute;
-                        if (match.Groups["Minute"].Success && int.TryParse(match.Groups["Minute"].Value, out minute))
+                        if (match.Groups["Minute"].Success && int.TryParse(match.Groups["Minute"].Value, out var minute))
                         {
                             r.ByMinute.Add(minute);
-                            int second;
-                            if (match.Groups["Second"].Success && int.TryParse(match.Groups["Second"].Value, out second))
+                            if (match.Groups["Second"].Success && int.TryParse(match.Groups["Second"].Value, out var second))
                             {
                                 r.BySecond.Add(second);
+                                if (match.Groups["Millisecond"].Success && int.TryParse(match.Groups["Millisecond"].Value, out var ms))
+                                {
+                                    r.ByMillisecond.Add(ms);
+                                }
                             }
                         }
                     }
@@ -454,6 +466,7 @@ namespace Ical.Net.Serialization.DataTypes
             CheckMutuallyExclusive("COUNT", "UNTIL", r.Count, r.Until);
             CheckRange("INTERVAL", r.Interval, 1, int.MaxValue);
             CheckRange("COUNT", r.Count, 1, int.MaxValue);
+            CheckRange("BYMILLISECOND", r.ByMillisecond, 0, 59999);
             CheckRange("BYSECOND", r.BySecond, 0, 59);
             CheckRange("BYMINUTE", r.ByMinute, 0, 59);
             CheckRange("BYHOUR", r.ByHour, 0, 23);

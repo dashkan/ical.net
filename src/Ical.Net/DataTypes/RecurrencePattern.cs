@@ -51,6 +51,7 @@ namespace Ical.Net.DataTypes
             set => _interval = value;
         }
 
+        public List<int> ByMillisecond { get; set; } = new List<int>();
         public List<int> BySecond { get; set; } = new List<int>();
 
         /// <summary> The ordinal minutes of the hour associated with this recurrence pattern. Valid values are 0-59. </summary>
@@ -148,6 +149,7 @@ namespace Ical.Net.DataTypes
             && Until.Equals(other.Until)
             && Count == other.Count
             && (FirstDayOfWeek == other.FirstDayOfWeek)
+            && CollectionEquals(ByMillisecond, other.ByMillisecond)
             && CollectionEquals(BySecond, other.BySecond)
             && CollectionEquals(ByMinute, other.ByMinute)
             && CollectionEquals(ByHour, other.ByHour)
@@ -176,6 +178,7 @@ namespace Ical.Net.DataTypes
                 hashCode = (hashCode * 397) ^ Until.GetHashCode();
                 hashCode = (hashCode * 397) ^ Count;
                 hashCode = (hashCode * 397) ^ (int)FirstDayOfWeek;
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMillisecond);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySecond);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMinute);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByHour);
@@ -203,6 +206,7 @@ namespace Ical.Net.DataTypes
             Until = r.Until;
             Count = r.Count;
             Interval = r.Interval;
+            ByMillisecond = new List<int>(r.ByMillisecond);
             BySecond = new List<int>(r.BySecond);
             ByMinute = new List<int>(r.ByMinute);
             ByHour = new List<int>(r.ByHour);

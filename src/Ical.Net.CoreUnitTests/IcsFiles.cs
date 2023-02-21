@@ -112,6 +112,8 @@ namespace Ical.Net.CoreUnitTests
         internal static string Property1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.Property1.ics");
         internal static string RecurrenceDates1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.RecurrenceDates1.ics");
         internal static string RequestStatus1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.RequestStatus1.ics");
+        
+        internal static string Millisecondly1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Recurrence.Millisecondly1.ics");
         internal static string Secondly1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Recurrence.Secondly1.ics");
         internal static string TimeZone1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.TimeZone1.ics");
         internal static string TimeZone2 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.TimeZone2.ics");

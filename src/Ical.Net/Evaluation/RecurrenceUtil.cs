@@ -53,16 +53,16 @@ namespace Ical.Net.Evaluation
             switch (p.Frequency)
             {
                 case FrequencyType.Minutely:
-                    return new bool?[] {false, null, false, false, false, false, false, true, false};
+                    return new bool?[] {false, null, false, false, false, false, false, true, false, false};
                 case FrequencyType.Hourly:
-                    return new bool?[] {false, null, false, false, false, false, true, true, false};
+                    return new bool?[] {false, null, false, false, false, false, true, true, false, false};
                 case FrequencyType.Daily:
-                    return new bool?[] {false, null, null, false, false, true, true, true, false};
+                    return new bool?[] {false, null, null, false, false, true, true, true, false, false};
                 case FrequencyType.Weekly:
-                    return new bool?[] {false, null, null, null, true, true, true, true, false};
+                    return new bool?[] {false, null, null, null, true, true, true, true, false, false};
                 case FrequencyType.Monthly:
                 {
-                    var row = new bool?[] {false, null, null, true, true, true, true, true, false};
+                    var row = new bool?[] {false, null, null, true, true, true, true, true, false, false};
 
                     // Limit if BYMONTHDAY is present; otherwise, special expand for MONTHLY.
                     if (p.ByMonthDay.Count > 0)
@@ -74,7 +74,7 @@ namespace Ical.Net.Evaluation
                 }
                 case FrequencyType.Yearly:
                 {
-                    var row = new bool?[] {true, true, true, true, true, true, true, true, false};
+                    var row = new bool?[] {true, true, true, true, true, true, true, true, false, false};
 
                     // Limit if BYYEARDAY or BYMONTHDAY is present; otherwise,
                     // special expand for WEEKLY if BYWEEKNO present; otherwise,
@@ -88,7 +88,7 @@ namespace Ical.Net.Evaluation
                     return row;
                 }
                 default:
-                    return new bool?[] {false, null, false, false, false, false, false, false, false};
+                    return new bool?[] {false, null, false, false, false, false, false, false, false, false};
             }
         }
     }
