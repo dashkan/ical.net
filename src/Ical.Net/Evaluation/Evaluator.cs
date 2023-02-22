@@ -59,6 +59,9 @@ namespace Ical.Net.Evaluation
             var old = dt;
             switch (pattern.Frequency)
             {
+                case FrequencyType.Millisecondly:
+                    dt = old.AddMilliseconds(interval);
+                    break;
                 case FrequencyType.Secondly:
                     dt = old.AddSeconds(interval);
                     break;

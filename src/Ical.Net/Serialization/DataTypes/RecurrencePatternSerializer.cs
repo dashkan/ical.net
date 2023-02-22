@@ -143,7 +143,7 @@ namespace Ical.Net.Serialization.DataTypes
                 var serializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
                 if (serializer != null)
                 {
-                    IDateTime until = new CalDateTime(recur.Until);
+                    IDateTime until = new CalDateTime(recur.Until, true);
                     until.HasTime = true;
                     values.Add("UNTIL=" + serializer.SerializeToString(until));
                 }

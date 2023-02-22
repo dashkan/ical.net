@@ -53,8 +53,8 @@ namespace Ical.Net.Utility
             }
 
             return dt1.IsUtc
-                ? new CalDateTime(copy.AsUtc)
-                : new CalDateTime(copy.AsSystemLocal);
+                ? new CalDateTime(copy.AsUtc, true)
+                : new CalDateTime(copy.AsSystemLocal, true);
         }
 
         public static DateTime AddWeeks(DateTime dt, int interval, DayOfWeek firstDayOfWeek)

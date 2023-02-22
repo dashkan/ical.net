@@ -20,7 +20,9 @@ namespace Ical.Net.Serialization
         {
             try
             {
+#pragma warning disable SYSLIB0001
                 var utf7 = new UTF7Encoding();
+#pragma warning restore SYSLIB0001
                 return utf7.GetBytes(value);
             }
             catch
@@ -78,7 +80,9 @@ namespace Ical.Net.Serialization
         {
             try
             {
+#pragma warning disable SYSLIB0001
                 var utf7 = new UTF7Encoding();
+#pragma warning restore SYSLIB0001
                 return utf7.GetString(data);
             }
             catch

@@ -60,7 +60,7 @@ internal static class CompiledRegularExpressions
     internal static readonly Regex DateOnly = new(DateOnlyPattern, DateOnlyOptions);
 #endif
 
-    private const string FullDateTimePattern = @"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$";
+    private const string FullDateTimePattern = @"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(\.(\d{1,3}))?(Z)?)$";
     private const RegexOptions FullDateTimeOptions = RegexOptions.Compiled | RegexOptions.IgnoreCase;
 #if SUPPORTS_REGEX_CODEGEN
     [GeneratedRegex(FullDateTimePattern, FullDateTimeOptions)]

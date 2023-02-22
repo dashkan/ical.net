@@ -166,7 +166,7 @@ namespace Ical.Net.CalendarComponents
             timeZoneInfo.TimeZoneName = oldestInterval.Name;
 
             var start = oldestInterval.IsoLocalStart.ToDateTimeUnspecified() + delta;
-            timeZoneInfo.Start = new CalDateTime(start) { HasTime = true };
+            timeZoneInfo.Start = new CalDateTime(start, true) { HasTime = true };
 
             if (isRRule)
             {
@@ -227,7 +227,7 @@ namespace Ical.Net.CalendarComponents
             {
                 var periodList = new PeriodList();
                 var time = interval.IsoLocalStart.ToDateTimeUnspecified();
-                var date = new CalDateTime(time).Add(delta) as CalDateTime;
+                var date = new CalDateTime(time, true).Add(delta) as CalDateTime;
                 if (date == null)
                 {
                     continue;

@@ -13,7 +13,13 @@ namespace Ical.Net.Serialization.DataTypes
 
         public DateTimeSerializer(SerializationContext ctx) : base(ctx) { }
 
-        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
+        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second,
+            DateTimeKind kind)
+        {
+            return CoerceDateTime(year, month, day, hour, minute, second, 0, kind);
+        }
+        
+        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, int ms, DateTimeKind kind)
         {
             var dt = DateTime.MinValue;
 
@@ -30,7 +36,7 @@ namespace Ical.Net.Serialization.DataTypes
                 }
                 else if (year > 0)
                 {
-                    dt = new DateTime(year, month, day, hour, minute, second, kind);
+                    dt = new DateTime(year, month, day, hour, minute, second, ms, kind);
                 }
             }
             catch {}
@@ -127,7 +133,8 @@ namespace Ical.Net.Serialization.DataTypes
             var hour = 0;
             var minute = 0;
             var second = 0;
-
+            var ms = 0;
+            
             if (match.Groups[1].Success)
             {
                 dt.HasDate = true;
@@ -141,9 +148,13 @@ namespace Ical.Net.Serialization.DataTypes
                 hour = Convert.ToInt32(match.Groups[6].Value);
                 minute = Convert.ToInt32(match.Groups[7].Value);
                 second = Convert.ToInt32(match.Groups[8].Value);
+                if (match.Groups[10].Success)
+                {
+                    ms = Convert.ToInt32(match.Groups[10].Value);
+                }
             }
 
-            var isUtc = match.Groups[9].Success;
+            var isUtc = match.Groups[11].Success;
             var kind = isUtc
                 ? DateTimeKind.Utc
                 : DateTimeKind.Local;
@@ -153,7 +164,7 @@ namespace Ical.Net.Serialization.DataTypes
                 dt.TzId = "UTC";
             }
 
-            dt.Value = CoerceDateTime(year, month, date, hour, minute, second, kind);
+            dt.Value = CoerceDateTime(year, month, date, hour, minute, second, ms, kind);
             return dt;
         }
     }

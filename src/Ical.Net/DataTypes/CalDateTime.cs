@@ -15,9 +15,9 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public sealed class CalDateTime : EncodableDataType, IDateTime
     {
-        public static CalDateTime Now => new CalDateTime(DateTime.Now);
+        public static CalDateTime Now => new(DateTime.Now);
 
-        public static CalDateTime Today => new CalDateTime(DateTime.Today);
+        public static CalDateTime Today => new(DateTime.Today);
 
         private bool _hasDate;
         private bool _hasTime;
@@ -29,16 +29,16 @@ namespace Ical.Net.DataTypes
             Initialize(value.Value, value.TzId, null);
         }
 
-        public CalDateTime(DateTime value) : this(value, null) { }
+        public CalDateTime(DateTime value, bool includeFractionalTime = false) : this(value, null, includeFractionalTime) { }
 
         /// <summary>
         /// Specifying a `tzId` value will override `value`'s `DateTimeKind` property. If the time zone specified is UTC, the underlying `DateTimeKind` will be
         /// `Utc`. If a non-UTC time zone is specified, the underlying `DateTimeKind` property will be `Local`. If no time zone is specified, the `DateTimeKind`
         /// property will be left untouched.
         /// </summary>
-        public CalDateTime(DateTime value, string tzId)
+        public CalDateTime(DateTime value, string tzId, bool includeFractionalTime = false)
         {
-            Initialize(value, tzId, null);
+            Initialize(value, tzId, null, includeFractionalTime);
         }
 
         public CalDateTime(int year, int month, int day, int hour, int minute, int second, int ms)
@@ -80,10 +80,10 @@ namespace Ical.Net.DataTypes
 
         private void Initialize(int year, int month, int day, int hour, int minute, int second, int ms, string tzId, Calendar cal)
         {
-            Initialize(CoerceDateTime(year, month, day, hour, minute, second, ms, DateTimeKind.Local), tzId, cal);
+            Initialize(CoerceDateTime(year, month, day, hour, minute, second, ms, DateTimeKind.Local), tzId, cal, true);
         }
 
-        private void Initialize(DateTime value, string tzId, Calendar cal)
+        private void Initialize(DateTime value, string tzId, Calendar cal, bool includeFractionalTime = false)
         {
             if (!string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
             {
@@ -98,9 +98,9 @@ namespace Ical.Net.DataTypes
                 TzId = "UTC";
             }
 
-            Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind);
+            Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, includeFractionalTime ? value.Millisecond : 0, value.Kind);
             HasDate = true;
-            HasTime = value.Second != 0 || value.Minute != 0 || value.Hour != 0;
+            HasTime = value.Second != 0 || value.Minute != 0 || value.Hour != 0 || (includeFractionalTime && value.Millisecond != 0);
             AssociatedObject = cal;
         }
 
@@ -222,7 +222,7 @@ namespace Ical.Net.DataTypes
             return copy;
         }
 
-        public static implicit operator CalDateTime(DateTime left) => new CalDateTime(left);
+        public static implicit operator CalDateTime(DateTime left) => new(left, true);
 
         /// <summary>
         /// Converts the date/time to the date/time of the computer running the program. If the DateTimeKind is Unspecified, it's assumed that the underlying

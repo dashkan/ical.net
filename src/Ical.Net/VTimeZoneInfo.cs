@@ -163,12 +163,12 @@ namespace Ical.Net
             => RecurrenceUtil.GetOccurrences(this, dt, true);
 
         public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
-            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), true);
+            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt, true), true);
 
         public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
             => RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
 
         public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
-            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), true);
+            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime, true), new CalDateTime(endTime, true), true);
     }
 }
