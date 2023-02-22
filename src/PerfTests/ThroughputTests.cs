@@ -2,15 +2,17 @@
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Ical.Net;
+// ReSharper disable StringLiteralTypo
+// ReSharper disable UnusedVariable
 
-namespace PerfTests
+namespace PerfTests;
+
+public class ThroughputTests
 {
-    public class ThroughputTests
-    {
-        [Benchmark]
-        public void DeserializeAndComputeUntilOccurrences()
-        {
-            const string e = @"BEGIN:VCALENDAR
+	[Benchmark]
+	public void DeserializeAndComputeUntilOccurrences()
+	{
+		const string e = @"BEGIN:VCALENDAR
 PRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN
 VERSION:2.0
 METHOD:PUBLISH
@@ -62,17 +64,17 @@ END:VALARM
 END:VEVENT
 END:VCALENDAR";
 
-            var calendar = Calendar.Load(e);
-            var calendarEvent = calendar.Events.First();
-            var searchStart = new DateTime(2009, 06, 20);
-            var searchEnd = new DateTime(2011,06,23);
-            var occurrences = calendarEvent.GetOccurrences(searchStart, searchEnd);
-        }
+		var calendar = Calendar.Load(e);
+		var calendarEvent = calendar.Events.First();
+		var searchStart = new DateTime(2009, 06, 20);
+		var searchEnd = new DateTime(2011,06,23);
+		var occurrences = calendarEvent.GetOccurrences(searchStart, searchEnd);
+	}
 
-        [Benchmark]
-        public void DeserializeAndComputeCountOccurrences()
-        {
-            const string e = @"BEGIN:VCALENDAR
+	[Benchmark]
+	public void DeserializeAndComputeCountOccurrences()
+	{
+		const string e = @"BEGIN:VCALENDAR
 PRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN
 VERSION:2.0
 METHOD:PUBLISH
@@ -124,11 +126,10 @@ END:VALARM
 END:VEVENT
 END:VCALENDAR";
 
-            var calendar = Calendar.Load(e);
-            var calendarEvent = calendar.Events.First();
-            var searchStart = new DateTime(2009, 06, 20);
-            var searchEnd = new DateTime(2011, 06, 23);
-            var occurrences = calendarEvent.GetOccurrences(searchStart, searchEnd);
-        }
-    }
+		var calendar = Calendar.Load(e);
+		var calendarEvent = calendar.Events.First();
+		var searchStart = new DateTime(2009, 06, 20);
+		var searchEnd = new DateTime(2011, 06, 23);
+		var occurrences = calendarEvent.GetOccurrences(searchStart, searchEnd);
+	}
 }

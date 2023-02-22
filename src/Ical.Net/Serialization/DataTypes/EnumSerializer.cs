@@ -2,69 +2,63 @@
 using System.IO;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class EnumSerializer : EncodableDataTypeSerializer
 {
-    public class EnumSerializer : EncodableDataTypeSerializer
+    private readonly Type _mEnumType;
+
+    public EnumSerializer(Type enumType)
     {
-        private readonly Type _mEnumType;
+        _mEnumType = enumType;
+    }
 
-        public EnumSerializer(Type enumType)
+    public EnumSerializer(Type enumType, SerializationContext ctx) : base(ctx)
+    {
+        _mEnumType = enumType;
+    }
+
+    public override Type TargetType => _mEnumType;
+
+    public override string SerializeToString(object enumValue)
+    {
+        try
         {
-            _mEnumType = enumType;
-        }
-
-        public EnumSerializer(Type enumType, SerializationContext ctx) : base(ctx)
-        {
-            _mEnumType = enumType;
-        }
-
-        public override Type TargetType => _mEnumType;
-
-        public override string SerializeToString(object enumValue)
-        {
-            try
+            if (SerializationContext.Peek() is not ICalendarObject obj) return enumValue.ToString();
+            // Encode the value as needed.
+            var dt = new EncodableDataType
             {
-                var obj = SerializationContext.Peek() as ICalendarObject;
-                if (obj != null)
-                {
-                    // Encode the value as needed.
-                    var dt = new EncodableDataType
-                    {
-                        AssociatedObject = obj
-                    };
-                    return Encode(dt, enumValue.ToString());
-                }
-                return enumValue.ToString();
-            }
-            catch
-            {
-                return null;
-            }
+                AssociatedObject = obj
+            };
+            return Encode(dt, enumValue.ToString());
         }
-
-        public override object Deserialize(TextReader tr)
+        catch
         {
-            var value = tr.ReadToEnd();
+            return null;
+        }
+    }
 
-            try
-            {
-                var obj = SerializationContext.Peek() as ICalendarObject;
-                if (obj != null)
-                {
-                    // Decode the value, if necessary!
-                    var dt = new EncodableDataType
-                    {
-                        AssociatedObject = obj
-                    };
-                    value = Decode(dt, value);
-                }
+    public override object Deserialize(TextReader tr)
+    {
+        var value = tr.ReadToEnd();
 
-                // Remove "-" characters while parsing Enum values.
+        try
+        {
+            if (SerializationContext.Peek() is not ICalendarObject obj)
                 return Enum.Parse(_mEnumType, value.Replace("-", ""), true);
-            }
-            catch {}
+            // Decode the value, if necessary!
+            var dt = new EncodableDataType
+            {
+                AssociatedObject = obj
+            };
+            value = Decode(dt, value);
 
-            return value;
+            // Remove "-" characters while parsing Enum values.
+            return Enum.Parse(_mEnumType, value.Replace("-", ""), true);
         }
+        // ReSharper disable once EmptyGeneralCatchClause
+        catch {}
+
+        return value;
     }
 }

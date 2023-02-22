@@ -1,4 +1,5 @@
-﻿using System;
+﻿// ReSharper disable CommentTypo
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
@@ -6,12 +7,15 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+// ReSharper disable InconsistentNaming
+// ReSharper disable ReturnValueOfPureMethodIsNotUsed
+// ReSharper disable StaticMemberInitializerReferesToMemberBelow
 
-namespace PerfTests
+namespace PerfTests;
+
+public class SerializationPerfTests
 {
-    public class SerializationPerfTests
-    {
-        private const string _sampleEvent = @"BEGIN:VCALENDAR
+    private const string _sampleEvent = @"BEGIN:VCALENDAR
 PRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN
 VERSION:2.0
 METHOD:PUBLISH
@@ -63,30 +67,28 @@ END:VEVENT
 END:VCALENDAR
 ";
 
-        [Benchmark]
-        public void Deserialize() => Calendar.Load(_sampleEvent).Events.First();
+    [Benchmark]
+    public void Deserialize() => Calendar.Load(_sampleEvent).Events.First();
 
-        [Benchmark]
-        public void SerializeCalendar() => new CalendarSerializer().SerializeToString(SimpleCalendar);
+    [Benchmark]
+    public void SerializeCalendar() => new CalendarSerializer().SerializeToString(SimpleCalendar);
 
-        private const string _aTzid = "America/New_York";
-        private static readonly Calendar SimpleCalendar = new Calendar
+    private const string _aTzid = "America/New_York";
+    private static readonly Calendar SimpleCalendar = new Calendar
+    {
+        Events = { _e },
+    };
+
+    private static readonly CalendarEvent _e = new CalendarEvent
+    {
+        Start = new CalDateTime(DateTime.Now, _aTzid),
+        End = new CalDateTime(DateTime.Now + TimeSpan.FromHours(1), _aTzid),
+        RecurrenceRules = new List<RecurrencePattern>
         {
-            Events = { _e },
-        };
-
-        private static readonly CalendarEvent _e = new CalendarEvent
-        {
-            Start = new CalDateTime(DateTime.Now, _aTzid),
-            End = new CalDateTime(DateTime.Now + TimeSpan.FromHours(1), _aTzid),
-            RecurrenceRules = new List<RecurrencePattern>
+            new RecurrencePattern(FrequencyType.Daily)
             {
-                new RecurrencePattern(FrequencyType.Daily, 1)
-                {
-                    Count = 100,
-                }
+                Count = 100,
             }
-        };
-    }
+        }
+    };
 }
-

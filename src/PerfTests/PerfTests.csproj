@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Ical.Net\Ical.Net.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="BenchmarkDotNet.Artifacts\results\PerfTests.ApplicationWorkflows-report-github.md" />
+  </ItemGroup>
+
 </Project>
