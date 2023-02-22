@@ -19,7 +19,7 @@ namespace PerfTests
         private static List<string> GetIcalStrings()
         {
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var topLevelIcsPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\", @"Ical.Net.CoreUnitTests\Calendars"));
+            var topLevelIcsPath = Path.GetFullPath(Path.Combine(currentDirectory, @"../../../../../../../../", @"Ical.Net.CoreUnitTests/Calendars"));
             return Directory.EnumerateFiles(topLevelIcsPath, "*.ics", SearchOption.AllDirectories)
                 .Select(File.ReadAllText)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
